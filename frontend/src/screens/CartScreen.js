@@ -12,6 +12,7 @@ import {
 } from "react-bootstrap";
 import Message from "../components/Message";
 import { addToCart, removeFromCart } from "../actions/cartActions";
+import { CART_RESET } from "../constants/cartConstants";
 
 const CartScreen = ({ match, location, history }) => {
   const productId = match.params.id;
@@ -23,11 +24,18 @@ const CartScreen = ({ match, location, history }) => {
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
 
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
   useEffect(() => {
+    if (!userInfo) {
+      dispatch({ type: CART_RESET });
+    }
+
     if (productId) {
       dispatch(addToCart(productId, qty));
     }
-  }, [dispatch, productId, qty]);
+  }, [dispatch, productId, qty, userInfo]);
 
   const removeFromCartHandler = (id) => {
     dispatch(removeFromCart(id));
